@@ -9,7 +9,7 @@ use {
     log::*,
     serde_derive::{Deserialize, Serialize},
     serde_json,
-    solana_geyser_plugin_interface::geyser_plugin_interface::{
+    agave_geyser_plugin_interface::geyser_plugin_interface::{
         GeyserPlugin, GeyserPluginError, ReplicaAccountInfoVersions, ReplicaBlockInfoVersions,
         ReplicaTransactionInfoVersions, Result, SlotStatus,
     },
@@ -168,7 +168,7 @@ impl GeyserPlugin for GeyserPluginPostgres {
     ///    }
     /// }
 
-    fn on_load(&mut self, config_file: &str) -> Result<()> {
+    fn on_load(&mut self, config_file: &str, _is_reload: bool) -> Result<()> {
         solana_logger::setup_with_default("info");
         info!(
             "Loading plugin {:?} from config_file {:?}",
@@ -414,7 +414,7 @@ impl GeyserPlugin for GeyserPluginPostgres {
                 )));
             }
             Some(client) => match block_info {
-                ReplicaBlockInfoVersions::V0_0_3(block_info) => {
+                ReplicaBlockInfoVersions::V0_0_4(block_info) => {
                     let result = client.update_block_metadata(block_info);
 
                     if let Err(err) = result {
@@ -422,6 +422,11 @@ impl GeyserPlugin for GeyserPluginPostgres {
                                 msg: format!("Failed to persist the update of block metadata to the PostgreSQL database. Error: {:?}", err)
                             });
                     }
+                }
+                ReplicaBlockInfoVersions::V0_0_3(_block_info) => {
+                    return Err(GeyserPluginError::SlotStatusUpdateError{
+                        msg: "Failed to persist the transaction info to the PostgreSQL database. Unsupported format.".to_string()
+                    });
                 }
                 ReplicaBlockInfoVersions::V0_0_2(_block_info) => {
                     return Err(GeyserPluginError::SlotStatusUpdateError{

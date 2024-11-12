@@ -8,8 +8,8 @@ use {
     chrono::Utc,
     log::*,
     postgres::{Client, Statement},
-    solana_geyser_plugin_interface::geyser_plugin_interface::{
-        GeyserPluginError, ReplicaBlockInfoV3,
+    agave_geyser_plugin_interface::geyser_plugin_interface::{
+        GeyserPluginError, ReplicaBlockInfoV4,
     },
 };
 
@@ -22,12 +22,12 @@ pub struct DbBlockInfo {
     pub block_height: Option<i64>,
 }
 
-impl<'a> From<&ReplicaBlockInfoV3<'a>> for DbBlockInfo {
-    fn from(block_info: &ReplicaBlockInfoV3) -> Self {
+impl<'a> From<&ReplicaBlockInfoV4<'a>> for DbBlockInfo {
+    fn from(block_info: &ReplicaBlockInfoV4) -> Self {
         Self {
             slot: block_info.slot as i64,
             blockhash: block_info.blockhash.to_string(),
-            rewards: block_info.rewards.iter().map(DbReward::from).collect(),
+            rewards: block_info.rewards.rewards.iter().map(DbReward::from).collect(),
             block_time: block_info.block_time,
             block_height: block_info
                 .block_height

@@ -9,7 +9,7 @@ use {
     log::*,
     postgres::{Client, Statement},
     postgres_types::{FromSql, ToSql},
-    solana_geyser_plugin_interface::geyser_plugin_interface::{
+    agave_geyser_plugin_interface::geyser_plugin_interface::{
         GeyserPluginError, ReplicaTransactionInfoV2,
     },
     solana_runtime::bank::RewardType,
@@ -353,6 +353,7 @@ pub enum DbTransactionErrorCode {
     ResanitizationNeeded,
     UnbalancedTransaction,
     ProgramExecutionTemporarilyRestricted,
+    ProgramCacheHitMaxLimit
 }
 
 impl From<&TransactionError> for DbTransactionErrorCode {
@@ -413,6 +414,7 @@ impl From<&TransactionError> for DbTransactionErrorCode {
             TransactionError::ProgramExecutionTemporarilyRestricted { account_index: _ } => {
                 Self::ProgramExecutionTemporarilyRestricted
             }
+            TransactionError::ProgramCacheHitMaxLimit => Self::ProgramCacheHitMaxLimit
         }
     }
 }

@@ -23,13 +23,13 @@ use serde_json::json;
 ///
 /// Before running 'cargo test', please run 'cargo build'
 use {
+    agave_geyser_plugin_postgres::{
+        geyser_plugin_postgres::GeyserPluginPostgresConfig, postgres_client::SimplePostgresClient,
+    },
     libloading::Library,
     log::*,
     serial_test::serial,
     solana_core::validator::ValidatorConfig,
-    solana_geyser_plugin_postgres::{
-        geyser_plugin_postgres::GeyserPluginPostgresConfig, postgres_client::SimplePostgresClient,
-    },
     solana_local_cluster::{
         cluster::Cluster,
         local_cluster::{ClusterConfig, LocalCluster},

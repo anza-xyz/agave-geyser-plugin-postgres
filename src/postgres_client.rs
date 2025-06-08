@@ -10,6 +10,9 @@ use {
         geyser_plugin_postgres::{GeyserPluginPostgresConfig, GeyserPluginPostgresError},
         postgres_client::postgres_client_account_index::TokenSecondaryIndexEntry,
     },
+    agave_geyser_plugin_interface::geyser_plugin_interface::{
+        GeyserPluginError, ReplicaAccountInfoV3, ReplicaBlockInfoVersions, SlotStatus,
+    },
     chrono::Utc,
     crossbeam_channel::{bounded, Receiver, RecvTimeoutError, Sender},
     log::*,
@@ -18,9 +21,6 @@ use {
     postgres_client_block_metadata::DbBlockInfo,
     postgres_client_transaction::LogTransactionRequest,
     postgres_openssl::MakeTlsConnector,
-    solana_geyser_plugin_interface::geyser_plugin_interface::{
-        GeyserPluginError, ReplicaAccountInfoV3, ReplicaBlockInfoV3, SlotStatus,
-    },
     solana_measure::measure::Measure,
     solana_metrics::*,
     solana_sdk::timing::AtomicInterval,
@@ -1232,17 +1232,27 @@ impl ParallelPostgresClient {
 
     pub fn update_block_metadata(
         &self,
-        block_info: &ReplicaBlockInfoV3,
+        block_info: ReplicaBlockInfoVersions,
     ) -> Result<(), GeyserPluginError> {
+        let (slot, db_block_info) = match block_info {
+            ReplicaBlockInfoVersions::V0_0_3(info) => (info.slot, DbBlockInfo::from(info)),
+            ReplicaBlockInfoVersions::V0_0_4(info) => (info.slot, DbBlockInfo::from(info)),
+            _ => {
+                return Err(GeyserPluginError::SlotStatusUpdateError {
+                    msg: "Unsupported block info version".to_string(),
+                })
+            }
+        };
+
         if let Err(err) = self.sender.send(DbWorkItem::UpdateBlockMetadata(Box::new(
             UpdateBlockMetadataRequest {
-                block_info: DbBlockInfo::from(block_info),
+                block_info: db_block_info,
             },
         ))) {
             return Err(GeyserPluginError::SlotStatusUpdateError {
                 msg: format!(
                     "Failed to update the block metadata at slot {:?}, error: {:?}",
-                    block_info.slot, err
+                    slot, err
                 ),
             });
         }

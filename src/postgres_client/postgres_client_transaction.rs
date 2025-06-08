@@ -5,13 +5,13 @@ use {
         geyser_plugin_postgres::{GeyserPluginPostgresConfig, GeyserPluginPostgresError},
         postgres_client::{DbWorkItem, ParallelPostgresClient, SimplePostgresClient},
     },
+    agave_geyser_plugin_interface::geyser_plugin_interface::{
+        GeyserPluginError, ReplicaTransactionInfoV2,
+    },
     chrono::Utc,
     log::*,
     postgres::{Client, Statement},
     postgres_types::{FromSql, ToSql},
-    solana_geyser_plugin_interface::geyser_plugin_interface::{
-        GeyserPluginError, ReplicaTransactionInfoV2,
-    },
     solana_runtime::bank::RewardType,
     solana_sdk::{
         instruction::CompiledInstruction,
@@ -353,6 +353,8 @@ pub enum DbTransactionErrorCode {
     ResanitizationNeeded,
     UnbalancedTransaction,
     ProgramExecutionTemporarilyRestricted,
+    ProgramCacheHitMaxLimit,
+    CommitCancelled,
 }
 
 impl From<&TransactionError> for DbTransactionErrorCode {
@@ -413,6 +415,8 @@ impl From<&TransactionError> for DbTransactionErrorCode {
             TransactionError::ProgramExecutionTemporarilyRestricted { account_index: _ } => {
                 Self::ProgramExecutionTemporarilyRestricted
             }
+            TransactionError::ProgramCacheHitMaxLimit => Self::ProgramCacheHitMaxLimit,
+            TransactionError::CommitCancelled => Self::CommitCancelled,
         }
     }
 }
@@ -656,6 +660,7 @@ impl ParallelPostgresClient {
 
 #[cfg(test)]
 pub(crate) mod tests {
+    use std::collections::HashSet;
     use {
         super::*,
         solana_account_decoder::parse_token::UiTokenAmount,
@@ -1320,6 +1325,7 @@ pub(crate) mod tests {
                 writable: vec![Pubkey::new_unique(), Pubkey::new_unique()],
                 readonly: vec![Pubkey::new_unique(), Pubkey::new_unique()],
             },
+            &HashSet::new(),
         );
 
         let db_message = DbLoadedMessageV0::from(&message);
@@ -1392,6 +1398,7 @@ pub(crate) mod tests {
             message_hash,
             Some(true),
             SimpleAddressLoader::Disabled,
+            &HashSet::new(),
         )
         .unwrap();
 
@@ -1437,6 +1444,7 @@ pub(crate) mod tests {
                 writable: vec![Pubkey::new_unique(), Pubkey::new_unique()],
                 readonly: vec![Pubkey::new_unique(), Pubkey::new_unique()],
             }),
+            &HashSet::new(),
         )
         .unwrap();
 

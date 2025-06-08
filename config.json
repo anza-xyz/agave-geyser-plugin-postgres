@@ -1,0 +1,17 @@
+{
+  "libpath": "./target/release/libagave_geyser_plugin_postgres.dylib",
+  "user": "admin",
+  "host": "localhost",
+  "password": "abcd1234",
+  "port": 5432,
+  "dbname": "main",
+  "threads": 1,
+  "batch_size": 20,
+  "panic_on_db_errors": false,
+  "accounts_selector" : {
+    "accounts" : ["*"]
+  },
+  "transaction_selector": {
+    "mentions": ["*"]
+  }
+}

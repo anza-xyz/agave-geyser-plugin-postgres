@@ -10,7 +10,7 @@ use {
     },
     log::*,
     postgres::{Client, Statement},
-    solana_geyser_plugin_interface::geyser_plugin_interface::GeyserPluginError,
+    agave_geyser_plugin_interface::geyser_plugin_interface::GeyserPluginError,
     solana_measure::measure::Measure,
     solana_metrics::*,
     solana_sdk::pubkey::Pubkey,

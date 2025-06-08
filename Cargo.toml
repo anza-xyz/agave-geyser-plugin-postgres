@@ -1,10 +1,10 @@
 [package]
 authors = ["Solana Maintainers <maintainers@solana.foundation>"]
 edition = "2021"
-name = "solana-geyser-plugin-postgres"
+name = "agave-geyser-plugin-postgres"
 description = "The Solana AccountsDb plugin for PostgreSQL database."
-version = "1.17.3"
-repository = "https://github.com/solana-labs/solana-accountsdb-plugin-postgres"
+version = "2.1.16"
+repository = "https://github.com/anza-xyz/agave-geyser-plugin-postgres"
 license = "Apache-2.0"
 homepage = "https://solana.com/"
 documentation = "https://docs.rs/solana-validator"
@@ -13,40 +13,41 @@ documentation = "https://docs.rs/solana-validator"
 crate-type = ["cdylib", "rlib"]
 
 [dependencies]
-bs58 = "0.4.0"
-bytemuck = "1.12.1"
-chrono = { version = "0.4.24", features = ["serde"] }
-crossbeam-channel = "0.5.7"
-log = "0.4.17"
+bs58 = "0.5.1"
+bytemuck = "1.19.0"
+chrono = { version = "0.4.38", features = ["serde"] }
+crossbeam-channel = "0.5.13"
+log = "0.4.22"
 openssl = { version = "0.10.42" }
 postgres = { version = "0.19.4", features = ["with-chrono-0_4"] }
 postgres-types = { version = "0.2.4", features = ["derive"] }
 postgres-openssl = { version = "0.5.0"}
-serde = "1.0.145"
-serde_derive = "1.0.145"
-serde_json = "1.0.85"
-solana-geyser-plugin-interface = { version = "=1.17.3" }
-solana-logger = { version = "1.17.3" }
-solana-measure = { version = "1.17.3" }
-solana-metrics = { version = "1.17.3" }
-solana-runtime = { version = "1.17.3" }
-solana-sdk = { version = "1.17.3" }
-solana-transaction-status = { version = "1.17.3" }
-thiserror = "1.0.37"
+serde = "1.0.213"
+serde_derive = "1.0.213"
+serde_json = "1.0.132"
+agave-geyser-plugin-interface = "2.2.7"
+solana-logger = "2.3.1"
+solana-measure = "2.2.7"
+solana-metrics = "2.2.7"
+solana-runtime = "2.2.7"
+solana-sdk = "2.2.2"
+solana-transaction-status = "2.2.7"
+thiserror = "2"
 tokio-postgres = "0.7.7"
 
 [dev-dependencies]
 libc = "0.2.134"
-libloading = "0.7.3"
-serial_test = "0.9.0"
-socket2 = { version = "0.4.7", features = ["all"] }
+libloading = "0.7.4"
+serial_test = "2.0.0"
+socket2 = { version = "0.5.7", features = ["all"] }
 
-solana-account-decoder = { version = "1.17.3" }
-solana-core = { version = "1.17.3" }
-solana-local-cluster = { version = "1.17.3" }
-solana-net-utils = { version = "1.17.3" }
-solana-streamer = { version = "1.17.3" }
-tempfile = "3.3.0"
+solana-account-decoder = "2.2.7"
+solana-core = "2.2.7"
+solana-local-cluster = "2.2.7"
+solana-net-utils = "2.2.7"
+solana-streamer = "2.2.7"
+solana-accounts-db = "2.2.7"
+tempfile = "3.13.0"
 
 [package.metadata.docs.rs]
 targets = ["x86_64-unknown-linux-gnu"]
